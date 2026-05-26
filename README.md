@@ -1,8 +1,6 @@
 # PGR Local Wine Patcher
 
-This directory contains a local patcher for keeping Punishing: Gray Raven playable through Sikarugir/Wine after game updates.
-
-The patcher is `pgr_apply_patches.py`.
+Contains a local patcher for keeping Punishing: Gray Raven playable through Sikarugir/Wine after game updates.
 
 ## What It Patches
 
