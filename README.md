@@ -75,14 +75,6 @@ The game has separate Wine/Unity registry state for window size. The current wor
 
 Virtual desktop mode is intentionally not enabled because it made the game window harder to move.
 
-Useful reset command if Wine keeps stale state:
-
-```bash
-WINEPREFIX="/Users/reiserfs/Applications/Sikarugir/Steam.app/Contents/SharedSupport/prefix" \
-DYLD_FALLBACK_LIBRARY_PATH="/Users/reiserfs/Applications/Sikarugir/Steam.app/Contents/Frameworks" \
-"/Users/reiserfs/Applications/Sikarugir/Steam.app/Contents/SharedSupport/wine/bin/wineserver" -k
-```
-
 ## Important Files
 
 - `pgr_apply_patches.py`: repeatable patcher.
