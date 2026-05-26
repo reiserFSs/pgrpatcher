@@ -1,3 +1,5 @@
+<img width="769" height="169" alt="Screenshot 2026-05-26 at 13 45 39" src="https://github.com/user-attachments/assets/7ca5577c-11d0-4e3a-9856-efd0a2e677f5" />
+
 # PGR Local Wine Patcher
 
 Contains a local patcher for keeping Punishing: Gray Raven playable through Sikarugir/Wine after game updates.
