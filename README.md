@@ -7,15 +7,15 @@ Contains a local patcher for keeping Punishing: Gray Raven playable through Sika
 ## What It Patches
 
 - `PGRBase.dll`
-- Reapplies the Rosetta-hostile NOP instruction fix.
-- Reinstalls the Unity startup stub used to bypass the ACE bootstrap/download path.
+- Applies the Rosetta-hostile NOP instruction fix.
+- Applies the Unity startup stub used to bypass the ACE bootstrap/download path.
 - Uses PE import/export parsing so the Unity stub patch is not tied to one fixed export file offset.
 
 - `GameAssembly.dll`
-- Reapplies the known Rosetta-hostile NOP instruction fix.
+- Applies the known Rosetta-hostile NOP instruction fix.
 
 - `PGR.exe`
-- Not modified.
+- Not being modified. 
 
 ## Usage
 
@@ -73,9 +73,9 @@ If the script prints warnings, review them before assuming the updated game is f
 
 ## Current Wine Notes
 
-The game has separate Wine/Unity registry state for window size. The current working setup uses normal windowed mode at `1920x1080`, with Wine Retina mode disabled.
+Everything working as expected, including Google OAUTH, store etc. On startup you'll get a blank Kuro SDK window (caused by using decrypted internal dev flags and stubs) which you can ignore. 
 
-Virtual desktop mode is intentionally not enabled because it made the game window harder to move.
+Performance: 80-120fps on a M4 Pro using DXVK
 
 ## Important Files
 
