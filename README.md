@@ -7,12 +7,12 @@ A local patcher for making Punishing: Gray Raven playable through Sikarugir/Wine
 ## What It Patches
 
 - `PGRBase.dll`
-- Applies the Rosetta-hostile NOP instruction fix.
-- Applies the Unity startup stub used to bypass the ACE bootstrap/download path.
+- Applies Rosetta-hostile NOP instruction fix.
+- Applies Unity startup stub used to bypass the ACE bootstrap/download path.
 - Uses PE import/export parsing so the Unity stub patch is not tied to one fixed export file offset.
 
 - `GameAssembly.dll`
-- Applies the known Rosetta-hostile NOP instruction fix.
+- Applies Rosetta-hostile NOP instruction fix.
 
 - `PGR.exe`
 - Not being modified. 
