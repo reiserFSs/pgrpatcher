@@ -17,7 +17,7 @@ Contains a local patcher for keeping Punishing: Gray Raven playable through Sika
 
 ## Usage
 
-Run from this game install directory after Steam updates the game:
+Put the the patcher into your Steam/SteamLibrary/steamapps/common/Punishing Gray Raven director and run it from bash:
 
 ```bash
 ./pgr_apply_patches.py
