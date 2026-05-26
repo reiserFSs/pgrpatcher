@@ -77,6 +77,9 @@ Everything working as expected, including Google OAUTH, store etc. On startup yo
 
 Performance: 80-120fps on a M4 Pro using DXVK
 
+<img width="1906" height="1063" alt="Screenshot 2026-05-26 at 17 39" src="https://github.com/user-attachments/assets/0c10ce84-ddab-47df-b3bf-018209cd7083" />
+
+
 ## Important Files
 
 - `pgr_apply_patches.py`: repeatable patcher.
