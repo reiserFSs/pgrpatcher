@@ -29,7 +29,7 @@ To check what it would do without changing files:
 ./pgr_apply_patches.py --dry-run
 ```
 
-You can also point it at another copied install directory:
+You can also point it at another copied install directory if you're using the Kuro Launcher version instead:
 
 ```bash
 ./pgr_apply_patches.py --root "/path/to/Punishing Gray Raven"
