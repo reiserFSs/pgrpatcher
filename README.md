@@ -2,7 +2,7 @@
 
 # PGR Local Wine Patcher
 
-A local patcher for making Punishing: Gray Raven playable through Sikarugir/Wine. Uses dev flags and ACE kernel stubs. 
+A local patcher for making Punishing: Gray Raven playable through Sikarugir/Wine. 
 
 ## What It Patches
 
