@@ -77,7 +77,7 @@ Everything working as expected, including Google OAUTH, store etc. On startup yo
 
 Note: You will need to include GStreamer into your Wine Env or else the game trying to play back Criware videos will crash the client. 
 
-Performance: 80-120fps on a M4 Pro using DXVK
+Performance: 80-120fps on a M4 Pro using DXVK, but performance is roughly 5-10% better using D3Metal so I rec. using that renderer. 
 
 <img width="1906" height="1063" alt="Screenshot 2026-05-26 at 17 39" src="https://github.com/user-attachments/assets/0c10ce84-ddab-47df-b3bf-018209cd7083" />
 
