@@ -73,7 +73,7 @@ If the script prints warnings, review them before assuming the updated game is f
 
 ## Current Wine Notes
 
-Everything working as expected, including Google OAUTH, store etc. On startup you'll get a blank Kuro SDK window (caused by using decrypted internal dev flags and stubs) which you can ignore. 
+Everything working as expected, including Google OAUTH, store etc. On startup you'll get a blank KRSDKExternal.exe window (caused by using decrypted internal dev flags and stubs) which you can ignore. Do not close the window or try to move it offscreen through Wine, it'll freeze the main PGR.EXE process. 
 
 Note: You will need to include GStreamer into your Wine Env or else the game trying to play back Criware videos will crash the client. 
 
