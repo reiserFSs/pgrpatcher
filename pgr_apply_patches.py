@@ -267,6 +267,26 @@ def find_masked(data: bytes | bytearray, pattern: list[int | None]) -> list[int]
     return out
 
 
+def find_masked_in_section(pe: PE, data: bytes | bytearray, pattern: list[int | None], section_name: str) -> list[int]:
+    for section in pe.sections:
+        if section.name != section_name:
+            continue
+        start = section.raw_offset
+        end = section.raw_offset + section.raw_size
+        return [start + hit for hit in find_masked(data[start:end], pattern)]
+    return []
+
+
+def hits_in_section(pe: PE, hits: list[int], section_name: str) -> list[int]:
+    for section in pe.sections:
+        if section.name != section_name:
+            continue
+        start = section.raw_offset
+        end = section.raw_offset + section.raw_size
+        return [hit for hit in hits if start <= hit < end]
+    return []
+
+
 def build_unity_stub(stub_va: int, load_library_iat_va: int, unity_main_rva: int, game_image_base: int) -> bytes:
     code = bytearray()
     code += b"\x48\x83\xEC\x28"  # sub rsp, 28h
@@ -388,6 +408,7 @@ def patch_gameassembly(session: PatchSession) -> None:
         return
 
     data = bytearray(path.read_bytes())
+    pe = PE(path, data)
     pattern = [
         0x33,
         0x0D,
@@ -418,8 +439,51 @@ def patch_gameassembly(session: PatchSession) -> None:
     patched_pattern = pattern[:]
     patched_pattern[12:16] = [0x90, 0x90, 0x90, 0x90]
 
-    original_hits = find_masked(data, pattern)
-    patched_hits = find_masked(data, patched_pattern)
+    fallback_pattern: list[int | None] = [
+        0x44,
+        0x33,
+        0x0D,
+        None,
+        None,
+        None,
+        None,
+        0x44,
+        0x33,
+        0x0D,
+        None,
+        None,
+        None,
+        None,
+        0x41,
+        0x0F,
+        0x1F,
+        0xC1,
+        0x44,
+        0x8B,
+        0x0A,
+        0x4C,
+        0x8B,
+        0x05,
+        None,
+        None,
+        None,
+        None,
+        0x4C,
+        0x33,
+        0x05,
+        None,
+        None,
+        None,
+        None,
+        0x49,
+        0x21,
+        0xD0,
+    ]
+    fallback_patched_pattern = fallback_pattern[:]
+    fallback_patched_pattern[14:18] = [0x90, 0x90, 0x90, 0x90]
+
+    original_hits = find_masked_in_section(pe, data, pattern, ".tvm0")
+    patched_hits = find_masked_in_section(pe, data, patched_pattern, ".tvm0")
     if original_hits:
         if len(original_hits) != 1:
             session.warn(f"GameAssembly Rosetta NOP signature matched {len(original_hits)} times; skipping")
@@ -431,7 +495,20 @@ def patch_gameassembly(session: PatchSession) -> None:
     elif patched_hits:
         print("GameAssembly.dll: Rosetta NOP already patched")
     else:
-        session.warn("GameAssembly Rosetta NOP signature not found")
+        fallback_hits = find_masked_in_section(pe, data, fallback_pattern, ".tvm0")
+        fallback_patched_hits = find_masked_in_section(pe, data, fallback_patched_pattern, ".tvm0")
+        if fallback_hits:
+            if len(fallback_hits) != 1:
+                session.warn(f"GameAssembly Rosetta NOP fallback signature matched {len(fallback_hits)} times; skipping")
+                return
+            patch_offset = fallback_hits[0] + 14
+            print(f"GameAssembly.dll: patching Rosetta NOP fallback at file+0x{patch_offset:x}")
+            data[patch_offset : patch_offset + 4] = b"\x90\x90\x90\x90"
+            session.write(path, data)
+        elif fallback_patched_hits:
+            print("GameAssembly.dll: Rosetta NOP fallback already patched")
+        else:
+            session.warn("GameAssembly Rosetta NOP signature not found")
 
 
 def main() -> int:
