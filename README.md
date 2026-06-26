@@ -1,4 +1,4 @@
-<img width="769" height="169" alt="Screenshot 2026-05-26 at 13 45 39" src="https://github.com/user-attachments/assets/7ca5577c-11d0-4e3a-9856-efd0a2e677f5" />
+<img width="1391" height="313" alt="image" src="https://github.com/user-attachments/assets/57261abf-56ab-4500-b0b8-cf528d14e1c6" />
 
 # PGR Local Wine Patcher
 
