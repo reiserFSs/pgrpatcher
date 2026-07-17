@@ -482,6 +482,41 @@ def patch_gameassembly(session: PatchSession) -> None:
     fallback_patched_pattern = fallback_pattern[:]
     fallback_patched_pattern[14:18] = [0x90, 0x90, 0x90, 0x90]
 
+    fallback2_pattern: list[int | None] = [
+        0x44,
+        0x33,
+        0x05,
+        None,
+        None,
+        None,
+        None,
+        0x44,
+        0x33,
+        0x05,
+        None,
+        None,
+        None,
+        None,
+        0x45,
+        0x21,
+        0xC1,
+        0x41,
+        0x0F,
+        0x1F,
+        0xC1,
+        0x44,
+        0x8B,
+        0x0A,
+        0x49,
+        0x89,
+        0xD0,
+        0x49,
+        0xF7,
+        0xD0,
+    ]
+    fallback2_patched_pattern = fallback2_pattern[:]
+    fallback2_patched_pattern[17:21] = [0x90, 0x90, 0x90, 0x90]
+
     original_hits = find_masked_in_section(pe, data, pattern, ".tvm0")
     patched_hits = find_masked_in_section(pe, data, patched_pattern, ".tvm0")
     if original_hits:
@@ -508,7 +543,20 @@ def patch_gameassembly(session: PatchSession) -> None:
         elif fallback_patched_hits:
             print("GameAssembly.dll: Rosetta NOP fallback already patched")
         else:
-            session.warn("GameAssembly Rosetta NOP signature not found")
+            fallback2_hits = find_masked_in_section(pe, data, fallback2_pattern, ".tvm0")
+            fallback2_patched_hits = find_masked_in_section(pe, data, fallback2_patched_pattern, ".tvm0")
+            if fallback2_hits:
+                if len(fallback2_hits) != 1:
+                    session.warn(f"GameAssembly Rosetta NOP fallback2 signature matched {len(fallback2_hits)} times; skipping")
+                    return
+                patch_offset = fallback2_hits[0] + 17
+                print(f"GameAssembly.dll: patching Rosetta NOP fallback2 at file+0x{patch_offset:x}")
+                data[patch_offset : patch_offset + 4] = b"\x90\x90\x90\x90"
+                session.write(path, data)
+            elif fallback2_patched_hits:
+                print("GameAssembly.dll: Rosetta NOP fallback2 already patched")
+            else:
+                session.warn("GameAssembly Rosetta NOP signature not found")
 
 
 def main() -> int:
