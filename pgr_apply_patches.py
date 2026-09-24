@@ -556,6 +556,16 @@ def patch_gameassembly(session: PatchSession) -> None:
     ]
     fallback3_patched_pattern = fallback3_pattern[:]
     fallback3_patched_pattern[16:19] = [0x90, 0x90, 0x90]
+    fallback4_pattern: list[int | None] = [
+        0x45, 0x09, 0xC1, 0x41, 0x81, 0xE1,
+        None, None, None, None,
+        0x45, 0x31, 0xC1, 0x41, 0x0F, 0x1F, 0xC1,
+        0x44, 0x8B, 0x0A, 0x4C, 0x8B, 0x05,
+        None, None, None, None,
+        0x4C, 0x03, 0x05,
+    ]
+    fallback4_patched_pattern = fallback4_pattern[:]
+    fallback4_patched_pattern[13:17] = [0x90] * 4
 
     def patch_fallback3_compensation() -> bool | None:
         original = bytes.fromhex("4c 8b 05 8a 62 fb ff 4c 03 05 7b b1 00 00")
@@ -628,7 +638,17 @@ def patch_gameassembly(session: PatchSession) -> None:
                     if patch_fallback3_compensation():
                         session.write(path, data)
                 else:
-                    session.warn("GameAssembly Rosetta NOP signature not found")
+                    fallback4_hits = find_masked_in_section(pe, data, fallback4_pattern, ".tvm0")
+                    fallback4_patched_hits = find_masked_in_section(pe, data, fallback4_patched_pattern, ".tvm0")
+                    if len(fallback4_hits) == 1 and not fallback4_patched_hits:
+                        patch_offset = fallback4_hits[0] + 13
+                        print(f"GameAssembly.dll: patching Rosetta NOP fallback4 at file+0x{patch_offset:x}")
+                        data[patch_offset : patch_offset + 4] = b"\x90" * 4
+                        session.write(path, data)
+                    elif len(fallback4_patched_hits) == 1 and not fallback4_hits:
+                        print("GameAssembly.dll: Rosetta NOP fallback4 already patched")
+                    else:
+                        session.warn("GameAssembly Rosetta NOP signature not unique or not found")
 
 
 def main() -> int:
