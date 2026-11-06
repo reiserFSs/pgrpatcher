@@ -566,6 +566,16 @@ def patch_gameassembly(session: PatchSession) -> None:
     ]
     fallback4_patched_pattern = fallback4_pattern[:]
     fallback4_patched_pattern[13:17] = [0x90] * 4
+    fallback5_pattern: list[int | None] = [
+        0x41, 0x09, 0xC9, 0x8B, 0x0D,
+        None, None, None, None,
+        0x33, 0x0D, None, None, None, None,
+        0x41, 0x21, 0xC9, 0x45, 0x31, 0xC1,
+        0x41, 0x0F, 0x1F, 0xC1,
+        0x44, 0x8B, 0x0A, 0x49, 0x89, 0xD0, 0x49, 0xF7, 0xD0,
+    ]
+    fallback5_patched_pattern = fallback5_pattern[:]
+    fallback5_patched_pattern[21:25] = [0x90] * 4
 
     def patch_fallback3_compensation() -> bool | None:
         original = bytes.fromhex("4c 8b 05 8a 62 fb ff 4c 03 05 7b b1 00 00")
@@ -648,7 +658,17 @@ def patch_gameassembly(session: PatchSession) -> None:
                     elif len(fallback4_patched_hits) == 1 and not fallback4_hits:
                         print("GameAssembly.dll: Rosetta NOP fallback4 already patched")
                     else:
-                        session.warn("GameAssembly Rosetta NOP signature not unique or not found")
+                        fallback5_hits = find_masked_in_section(pe, data, fallback5_pattern, ".tvm0")
+                        fallback5_patched_hits = find_masked_in_section(pe, data, fallback5_patched_pattern, ".tvm0")
+                        if len(fallback5_hits) == 1 and not fallback5_patched_hits:
+                            patch_offset = fallback5_hits[0] + 21
+                            print(f"GameAssembly.dll: patching Rosetta NOP fallback5 at file+0x{patch_offset:x}")
+                            data[patch_offset : patch_offset + 4] = b"\x90" * 4
+                            session.write(path, data)
+                        elif len(fallback5_patched_hits) == 1 and not fallback5_hits:
+                            print("GameAssembly.dll: Rosetta NOP fallback5 already patched")
+                        else:
+                            session.warn("GameAssembly Rosetta NOP signature not unique or not found")
 
 
 def main() -> int:
